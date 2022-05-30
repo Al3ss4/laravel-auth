@@ -26,7 +26,7 @@ class PostController extends Controller
      */
     public function create()
     {
-        //
+        return view('admin.posts.create');
     }
 
     /**
@@ -37,7 +37,33 @@ class PostController extends Controller
      */
     public function store(Request $request)
     {
-        //
+
+        // validazione dei dati
+        $request->validate([
+            'title'=> 'required|max:200',
+            'content'=>'required'
+        ]);
+
+        // prendiamo i dati
+        $postData = $request->all();
+
+         // creiamo la nuova istanza con i dati ottenuti dalla request
+        $newPost = new Post();
+        $newPost-> fill($postData);
+        $slug = Str::slug($newPost->title);
+        $alternativeSlug = $slug;
+        $postFound = Post::where('slug', $slug )-> first();
+        $counter =1;
+
+        // fin quando non c'è un duplicato il ciclo continua
+        while($postFound){
+            $alternativeSlug = $slug . '_' . $counter;
+            $counter++;
+            $postFound = Post::where('slug', $alternativeSlug)-> first();
+        }
+        $newPost->slug = $alternativeSlug;
+        $newPost->save();
+        return redirect()->route('admin.posts.index');
     }
 
     /**
