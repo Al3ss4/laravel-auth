@@ -98,9 +98,40 @@ class PostController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, Post $post)
     {
-        //
+        // validazione dei dati
+        $request->validate([
+            'title' => 'required|max:200',
+            'content' => 'required'
+        ]);
+
+        // prendiamo i dati
+        $data = $request->all();
+
+        // se il 'title' è stato modificato allora parte l if
+        if($data['title'] != $post->title){
+
+            $slug = Str::slug($data['title'], '-');
+
+            $slug_standard = $slug;
+
+            $slug_presente = Post::where('slug',  $slug)->first();
+
+            $counter = 1;
+            while($slug_presente){
+                $slug = $slug_standard . '-' . $counter;
+                $slug_presente = Post::where('slug',  $slug)->first();
+                $counter++;
+            }
+
+            $data['slug'] = $slug;
+        }
+
+         // si attua la modifica
+        $post->update($data);
+
+        return redirect()->route('admin.posts.index');
     }
 
     /**
