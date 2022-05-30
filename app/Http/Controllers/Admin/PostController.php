@@ -72,9 +72,12 @@ class PostController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show($slug)
     {
-        //
+        // selezio il primo elemento
+        $post = Post::where('slug', $slug)->first();
+
+        return view('admin.posts.show', compact('post'));
     }
 
     /**
@@ -83,9 +86,9 @@ class PostController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit(Post $post)
     {
-        //
+        return view('admin.posts.edit', compact('post'));
     }
 
     /**
