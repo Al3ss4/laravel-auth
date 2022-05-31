@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use App\Post;
 
 class PostController extends Controller
@@ -15,8 +16,10 @@ class PostController extends Controller
      */
     public function index()
     {
-        $post = Post::all();
-        return view('admin.posts.index' , compact('posts'));
+        $data=[];
+        $posts = Post::all();
+        $data['posts'] = $posts;
+        return view('admin.posts.index' ,$data);
     }
 
     /**
@@ -72,12 +75,10 @@ class PostController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($slug)
-    {
-        // selezio il primo elemento
-        $post = Post::where('slug', $slug)->first();
+    public function show($id){
 
-        return view('admin.posts.show', compact('post'));
+        $post = Post::find($id);
+        return view('admin.posts.show' , compact('post'));
     }
 
     /**
